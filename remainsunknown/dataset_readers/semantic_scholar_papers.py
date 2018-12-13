@@ -38,15 +38,14 @@ class SemanticScholarRemainsReader(DatasetReader):
                 abstract = description["paperAbstract"]
                 yield self.text_to_instance(title, abstract)
     
-    #TODO: add textfield that has "remains" sentence
     @overrides
     def text_to_instance(self, title: str, abstract: str) -> Instance:
         tokenized_title = self._tokenizer.tokenize(title)
         title_field = TextField(tokenized_title, self._token_indexers)
         fields = {'title': title_field}
         # only keep part of abstract that is matched
-        all_sentences_plus_remains = '(.)* remains [^.]*\.'
-        only_remains = '[^.]* remains [^.]*\.'
+        all_sentences_plus_remains = r'(.)* remains [^.]*\.'
+        only_remains = r'[^.]* remains [^.]*\.'
         p = re.compile(all_sentences_plus_remains)
         p2 = re.compile(only_remains)
         matches = p.search(abstract)
@@ -54,13 +53,11 @@ class SemanticScholarRemainsReader(DatasetReader):
         if matches:
             remains = p2.search(abstract)
             # remains sentence is the first sentence
-            if remains.group(0) == matches.group(0):
-                tokenized_remains = self._tokenizer.tokenize('UNAPPLICABLE')
-            else:
-                abstract = re.sub('[^.]* remains [^.]*\.', '', matches.group(0))
+            if remains.group(0) != matches.group(0):
+                abstract = re.sub(r'[^.]* remains [^.]*\.', '', matches.group(0))
                 tokenized_remains = self._tokenizer.tokenize(remains.group(0))
-            remains_field = TextField(tokenized_remains, self._token_indexers)
-            fields['remains'] = remains_field
+                remains_field = TextField(tokenized_remains, self._token_indexers)
+                fields['remains'] = remains_field
         tokenized_abstract = self._tokenizer.tokenize(abstract)
         abstract_field = TextField(tokenized_abstract, self._token_indexers)
         fields['abstract'] = abstract_field

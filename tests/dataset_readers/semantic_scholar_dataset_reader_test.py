@@ -12,8 +12,7 @@ class TestSemanticScholarRemainsReader(AllenNlpTestCase):
                                 'differentiation', 'and', 'survival', 'in', 'ovarian',
                                 'cancer', '.'],
                       "paperAbstract" : ['Low', '-', 'grade', '(', 'LG', ')', 'serous',
-                                         'ovarian', 'carcinoma', 'is'],
-                       "remains" : ["UNAPPLICABLE"]}
+                                         'ovarian', 'carcinoma', 'is']}
         instance2 = {'paperAbstract' : ['Antibodies', 'against', 'CD66', 'identify',
         'antigens', 'from', 'the', 'carcinoembryonic', 'antigen', '('],
                       'title' : ['CD66', 'expression', 'in', 'acute', 'leukaemia'],
@@ -24,7 +23,7 @@ class TestSemanticScholarRemainsReader(AllenNlpTestCase):
         fields = instances[0].fields
         assert [t.text for t in fields["title"].tokens] == instance1["title"]
         assert [t.text for t in fields["abstract"].tokens[:len(instance1["paperAbstract"])]] == instance1["paperAbstract"]
-        assert fields['remains'].tokens[0].text == instance1['remains'][0]
+        assert 'remains' not in fields
         fields = instances[2].fields
         assert [t.text for t in fields["title"].tokens] == instance2["title"]
         assert [t.text for t in fields["abstract"].tokens[:len(instance2["paperAbstract"])]] == instance2["paperAbstract"]

@@ -19,6 +19,7 @@ from allennlp.nn import util
 from allennlp.nn.beam_search import BeamSearch
 from allennlp.training.metrics import BLEU
 
+
 @Model.register("remains_seq2seq")
 class RemainsSeq2Seq(Model):
     """
@@ -399,7 +400,8 @@ class RemainsSeq2Seq(Model):
 
         if self._attention:
             # shape: (group_size, encoder_output_dim)
-            attended_input = self._prepare_attended_input(decoder_hidden, encoder_outputs, source_mask)
+            attended_input = self._prepare_attended_input(
+                    decoder_hidden, encoder_outputs, source_mask)
 
             # shape: (group_size, decoder_output_dim + target_embedding_dim)
             decoder_input = torch.cat((attended_input, embedded_input), -1)
@@ -472,7 +474,8 @@ class RemainsSeq2Seq(Model):
         # shape: (batch_size, num_decoding_steps)
         relevant_mask = target_mask[:, 1:].contiguous()
 
-        return util.sequence_cross_entropy_with_logits(logits, relevant_targets, relevant_mask)
+        return util.sequence_cross_entropy_with_logits(logits, relevant_targets,
+                                                       relevant_mask)
 
     @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
